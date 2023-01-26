@@ -1,0 +1,26 @@
+---
+- name: Update VMware Tools on Linux VMs
+  hosts: all
+  gather_facts: false
+  vars:
+    vsphere_host: vcenter.example.com
+    vsphere_user: administrator@vsphere.local
+    vsphere_pass: password
+  tasks:
+  - name: Connect to vSphere
+    local_action:
+      module: vsphere_guest
+      hostname: "{{ vsphere_host }}"
+      username: "{{ vsphere_user }}"
+      password: "{{ vsphere_pass }}"
+      validate_certs: False
+    delegate_to: localhost
+
+  - name: Update VMware Tools
+    local_action:
+      module: vsphere_guest
+      name: "{{ inventory_hostname }}"
+      state: present
+      update_tools: yes
+      update_tools_wait_timeout: 1800
+    delegate_to: localhost
